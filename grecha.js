@@ -5,9 +5,6 @@ const s = (prop) => prop.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
 window.state = new Map();
 
 function setState(key, value) {
-	if (!window.state.has(key)) {
-		console.log(`Creating new state key: ${key}`);
-	}
 	window.state.set(key, value);
 }
 
@@ -19,6 +16,12 @@ function getState(key) {
 		return window.state.get(key);
 	} catch (error) {
 		console.error(error.message);
+	}
+}
+
+function clearState(key) {
+	if (window.state.has(key)) {
+		window.state.delete(key);
 	}
 }
 
@@ -77,26 +80,22 @@ const canvas = (id, width, height) => tag("canvas").att$("id", id);
 function router(routes) {
 	let result = div();
 	function syncHash() {
-		let hashLocation = document.location.hash.split("#")[1];
-		if (!hashLocation) {
-			hashLocation = "/";
-		}
-		if (!(hashLocation in routes)) {
-			const route404 = "/404";
-			console.assert(route404 in routes);
-			hashLocation = route404;
+		let hashLocation = document.location.hash.split("#")[1] || "/";
+		console.log(hashLocation);
+		let [path, queryString] = hashLocation.split("?");
+		if (!(path in routes)) {
+			path = "/404";
 		}
 		style(styles());
-		result.replaceChildren(routes[hashLocation]());
+		const params = new URLSearchParams(queryString);
+		console.log(params);
+		const routeComponent = routes[path];
+		result.replaceChildren(routeComponent(params));
 		return result;
-	}
-	function destroy() {
-		window.removeEventListener("hashchange", syncHash);
-		result.remove();
 	}
 	syncHash();
 	window.addEventListener("hashchange", syncHash);
 	result.refresh = syncHash;
-	result.destroy = destroy;
+
 	return result;
 }

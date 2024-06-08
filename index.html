@@ -26,7 +26,7 @@
 
         const Menu =()=>{
             return div(
-                    div(a("Foo").att$("href", "#/foo")),
+                    div(a("Foo").att$("href", "#/foo?color=blue")),
                     div(a("Bar").att$("href", "#/bar"))
                 ).att$('class', 'menu')
         }
@@ -105,9 +105,9 @@
                 Menu(),
                 Counter(),
             ),
-            "/foo": () => Group('foo',
+            "/foo": (params) => Group('foo',
                 h1("Foo"),
-                p(LOREM).style$( {color: state.color}),
+                p(LOREM).style$( {color: params.get('color')}),
                 div(a("Home").att$("href", "#")),
             ),
             "/bar": () => Group('bar',
