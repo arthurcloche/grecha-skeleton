@@ -11,12 +11,51 @@
     <div id="entry"></div>
     <script src="./grecha.js"></script>
     <script>
-        
-        const state = {
-            count : 0,
+        // state
+        setState('count',0)
+        setState('awesome',false)
+        setState('windowSize',{})
+        // components
+        const Title =()=>{
+            return h1(getState('awesome') ? 'this is cool' : 'this is awesome').att$('class', 'title').listen$('onmouseenter',function(e) {
+                    console.log(e.target)
+                }).listen$('onmouseleave',function(e) {
+                    console.log(e.target)
+                })
         }
 
-        
+        const Menu =()=>{
+            return div(
+                    div(a("Foo").att$("href", "#/foo")),
+                    div(a("Bar").att$("href", "#/bar"))
+                ).att$('class', 'menu')
+        }
+
+        const Group =(name,...children)=>{
+            return div(...children).att$('class',`${name}`)
+        }
+
+        const Home =(...children)=>{
+            return div(...children).att$('class','home')
+        }
+        const Counter =()=>{
+            return div(
+                div("Counter: " + getState('count')),
+                div(
+                    input('button').att$("value", "OK!").att$("class", "button").listen$('onclick',function () {
+                        setState("count", getState("count") + 1);
+                        setState('awesome',!getState('awesome'));
+                        routes.refresh();
+                    }),
+                    input('button').att$("value", "Reset!").att$("class", "button").listen$('onclick',function () {
+                        setState("count", 0);
+                        setState('awesome',false);
+                        routes.refresh();
+                    })
+                )).att$('class','counter')
+        }
+
+        //css
         const styles=()=>{
 	return {
 		body: {
@@ -24,10 +63,10 @@
 			padding: "0",
             width:"100%",
 			fontFamily: "Arial, sans-serif",
-			backgroundColor: "blue",
+			
 		},
 		h1: {
-			color: state.count % 2 === 0 ? "#AAA" : "#333",
+			color: getState('count') % 2 === 0 ? "#AAA" : "#333",
 			textAlign: "center",
 		},
 		".title": {
@@ -36,9 +75,16 @@
 		},
         ".menu" :{
             display: "flex",
-            flexDirection:"rows",
+            flexDirection:"row",
             alignItems:"center",
             justifyContent:"space-around",
+        },
+        ".counter":{
+            display:"flex",
+            alignItems:"center",
+            padding:"10px",
+            flexDirection:'column',
+            
         },
 		".menu a": {
 			color: "#007BFF",
@@ -47,44 +93,40 @@
 		".menu a:hover": {
 			textDecoration: "underline",
 		},
+        "#main":{
+            backgroundColor:"red",
+        }
 	};
 }
-        
+        // routes
         const routes = router({
-            "/": () => div(
-                h1("Grecha.js").att$('class', 'title').listen$('onmouseenter',function(e) {
-                    console.log(e.target)
-                }).listen$('onmouseleave',function(e) {
-                    console.log(e.target)
-                }),
-                div(
-                    div(a("Foo").att$("href", "#/foo")),
-                    div(a("Bar").att$("href", "#/bar"))
-                ).att$('class', 'menu'),
-                div("Counter: " + state.count),
-                div(
-                    input('button').att$("value", "OK!").att$("class", "button").listen$('onclick',function () {
-                        state.count += 1;
-                        routes.refresh();
-                    }),
-                    input('button').att$("value", "Reset!").att$("class", "button").listen$('onclick',function () {
-                        state.count = 0;
-                        routes.refresh();
-                    })
-                )
-            ).att$('class', 'container'),
-            "/foo": () => div(
+            "/": () => Home(
+                Title('hello world'),
+                Menu(),
+                Counter(),
+            ),
+            "/foo": () => Group('foo',
                 h1("Foo"),
-                p(LOREM).style$( {color:"red"}),
+                p(LOREM).style$( {color: state.color}),
                 div(a("Home").att$("href", "#")),
             ),
-            "/bar": () => div(
+            "/bar": () => Group('bar',
                 h1("Bar"),
                 p(LOREM).style$( {color:"blue"}),
+                div(a("Home").att$("href", "#")),
+                canvas("main").style$({width:"200px",height:"200px"}),
+            ),
+            "/404": () => div(
+                h1("404 Not Found"),
+                p("The page you are looking for does not exist."),
                 div(a("Home").att$("href", "#"))
-            )
+        ),
         });
         entry.appendChild(routes);
+        window.onresize = ()=>{
+            setState('window',{width: window.innerWidth, height:window.innerHeight})
+            console.log(getState('window'))
+        }
     </script>
 </body>
 </html>
