@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    
+    <title>Gretcha</title>
+</head>
+<body>
+    <div id="entry"></div>
+    <script src="./grecha.js"></script>
+    <script>
+        
+        const state = {
+            count : 0,
+        }
+
+        
+        const styles=()=>{
+	return {
+		body: {
+			margin: "0",
+			padding: "0",
+            width:"100%",
+			fontFamily: "Arial, sans-serif",
+			backgroundColor: "blue",
+		},
+		h1: {
+			color: state.count % 2 === 0 ? "#AAA" : "#333",
+			textAlign: "center",
+		},
+		".title": {
+			fontSize: "4em",
+			margin: "0.5em 0",
+		},
+        ".menu" :{
+            display: "flex",
+            flexDirection:"rows",
+            alignItems:"center",
+            justifyContent:"space-around",
+        },
+		".menu a": {
+			color: "#007BFF",
+			textDecoration: "none",
+		},
+		".menu a:hover": {
+			textDecoration: "underline",
+		},
+	};
+}
+        
+        const routes = router({
+            "/": () => div(
+                h1("Grecha.js").att$('class', 'title').listen$('onmouseenter',function(e) {
+                    console.log(e.target)
+                }).listen$('onmouseleave',function(e) {
+                    console.log(e.target)
+                }),
+                div(
+                    div(a("Foo").att$("href", "#/foo")),
+                    div(a("Bar").att$("href", "#/bar"))
+                ).att$('class', 'menu'),
+                div("Counter: " + state.count),
+                div(
+                    input('button').att$("value", "OK!").att$("class", "button").listen$('onclick',function () {
+                        state.count += 1;
+                        routes.refresh();
+                    }),
+                    input('button').att$("value", "Reset!").att$("class", "button").listen$('onclick',function () {
+                        state.count = 0;
+                        routes.refresh();
+                    })
+                )
+            ).att$('class', 'container'),
+            "/foo": () => div(
+                h1("Foo"),
+                p(LOREM).style$( {color:"red"}),
+                div(a("Home").att$("href", "#")),
+            ),
+            "/bar": () => div(
+                h1("Bar"),
+                p(LOREM).style$( {color:"blue"}),
+                div(a("Home").att$("href", "#"))
+            )
+        });
+        entry.appendChild(routes);
+    </script>
+</body>
+</html>
