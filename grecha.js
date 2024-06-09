@@ -1,6 +1,30 @@
 const LOREM =
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 const s = (prop) => prop.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+function Cleanup() {
+  const cleanups = new Map();
+  return {
+    add: (key, callback) => {
+      if (!key) {
+        throw new Error("Component ID is required to register cleanup.");
+      }
+      cleanups.set(key, callback);
+    },
+    remove: (key) => {
+      cleanups.delete(key);
+    },
+    has: (key) => cleanups.has(key),
+    cleanup: () => {
+      for (const [key, callback] of cleanups) {
+        callback();
+        cleanups.delete(key);
+      }
+    },
+    log: () => console.log(Array.from(cleanups.keys())),
+  };
+}
+
+const cleanup = Cleanup();
 
 function State() {
   if (!window.state) {
@@ -79,15 +103,14 @@ function Tag(name, ...children) {
       return this;
     }
   };
-  result.unmount$ = function (callback, unmounted) {
-    callback(this);
-    console.log("unmounting");
-    // window.onhashchange("onhashchange", function (e) {
-    //   if (callback) callback(this);
-    //   window.removeEventListener("hashchange", () => {
-    //     if (unmounted) unmounted();
-    //   });
-    // });
+  result.unmount$ = function (callback) {
+    if (!cleanup.has(this.id)) {
+      cleanup.add(this.id, () => callback(this));
+    } else {
+      console.warn(
+        "An ID is required for unmount cleanup registration or the ID is already in use."
+      );
+    }
     return this;
   };
   result.callback$ = function (callback) {
@@ -120,6 +143,7 @@ function Router(routes) {
       path = "/404";
     }
     Style(styles());
+
     const params = new URLSearchParams(queryString);
     // console.log(params);
     const routeComponent = routes[path];
@@ -128,6 +152,9 @@ function Router(routes) {
   }
   syncHash();
   window.addEventListener("hashchange", syncHash);
+  window.onpopstate = () => {
+    cleanup.cleanup();
+  };
   result.refresh = syncHash;
 
   return result;

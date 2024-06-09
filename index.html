@@ -103,13 +103,25 @@
         }
 	};
 }
+
+/*
+.listen$('onhashchange',(e)=>{
+                console.log('hash changed')
+                console.log(e)
+                window.removeEventListener("hashchange", ()=>console.log('event removed'));
+            },true),
+*/
+let stack = 0
         // routes
         const routes = Router({
             "/": () => Home(
                 Title('hello world'),
                 Menu(),
                 Counter(),
-            ),
+            ).att$('id','home').unmount$(()=>{
+                console.log('hello')
+            }),
+            
             "/foo": (params) => Group('foo',
                 h1("Foo"),
                 p(LOREM).style$( {color: params.get('color')}),
