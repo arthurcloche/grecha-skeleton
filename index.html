@@ -18,7 +18,8 @@
         state.set('count',0)
         state.set('awesome',false)
         state.set('windowSize',{})
-
+        
+        
         // components
         const Title =()=>{
             return h1(state.get('awesome') ? 'this is cool' : 'this is awesome').att$('class', 'title').listen$('onmouseenter',function(e) {
@@ -119,6 +120,7 @@ let stack = 0
                 Menu(),
                 Counter(),
             ).att$('id','home').unmount$(()=>{
+                state.set('count',0)
                 console.log('hello')
             }),
             

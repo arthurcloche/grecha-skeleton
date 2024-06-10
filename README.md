@@ -5,11 +5,12 @@ Goal : HTML-in-JS to boostrap apps faster and without React
 
 ## TO DO
 x Fix State
+- Async loaded images + loading state
 - Nested Routes
-- Fix 404 caused by Params in routes
-- Clean up on leaving routes 
-    - unmount logic
-    - clean up event listener and state
+x Fix 404 caused by Params in routes
+x Clean up on leaving routes 
+    x unmount logic
+    x clean up event listener and state
 - CSS animation 
 - Styled Routes + style as props
 - Web Components !

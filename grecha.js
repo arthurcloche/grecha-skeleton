@@ -14,7 +14,7 @@ function Cleanup() {
       cleanups.delete(key);
     },
     has: (key) => cleanups.has(key),
-    cleanup: () => {
+    clean: () => {
       for (const [key, callback] of cleanups) {
         callback();
         cleanups.delete(key);
@@ -153,7 +153,7 @@ function Router(routes) {
   syncHash();
   window.addEventListener("hashchange", syncHash);
   window.onpopstate = () => {
-    cleanup.cleanup();
+    cleanup.clean();
   };
   result.refresh = syncHash;
 
