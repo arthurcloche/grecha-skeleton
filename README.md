@@ -4,13 +4,13 @@ Testing minimalistic approaches
 Goal : HTML-in-JS to boostrap apps faster and without React
 
 ## TO DO
-x Fix State
+- X Fix State
 - Async loaded images + loading state
 - Nested Routes
-x Fix 404 caused by Params in routes
-x Clean up on leaving routes 
-    x unmount logic
-    x clean up event listener and state
+- X Fix 404 caused by Params in routes
+- X Clean up on leaving routes 
+    - X unmount logic
+    - X clean up event listener and state
 - CSS animation 
 - Styled Routes + style as props
 - Web Components !
